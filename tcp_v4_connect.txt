@@ -1,0 +1,590 @@
+
+vmlinux:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+ffffffff81f71df0 <tcp_v4_connect>:
+	return BPF_CGROUP_RUN_PROG_INET4_CONNECT(sk, uaddr, &addr_len);
+}
+
+/* This will initiate an outgoing connection. */
+int tcp_v4_connect(struct sock *sk, struct sockaddr *uaddr, int addr_len)
+{
+ffffffff81f71df0:	e8 9b fb 13 ff       	call   ffffffff810b1990 <__fentry__>
+ffffffff81f71df5:	55                   	push   %rbp
+ffffffff81f71df6:	48 89 e5             	mov    %rsp,%rbp
+ffffffff81f71df9:	41 57                	push   %r15
+ffffffff81f71dfb:	41 56                	push   %r14
+ffffffff81f71dfd:	41 55                	push   %r13
+ffffffff81f71dff:	41 54                	push   %r12
+ffffffff81f71e01:	53                   	push   %rbx
+ffffffff81f71e02:	48 83 ec 30          	sub    $0x30,%rsp
+}
+
+static inline struct net *read_pnet(const possible_net_t *pnet)
+{
+#ifdef CONFIG_NET_NS
+	return pnet->net;
+ffffffff81f71e06:	65 48 8b 04 25 28 00 	mov    %gs:0x28,%rax
+ffffffff81f71e0d:	00 00 
+ffffffff81f71e0f:	48 89 45 d0          	mov    %rax,-0x30(%rbp)
+ffffffff81f71e13:	48 8b 47 30          	mov    0x30(%rdi),%rax
+	struct net *net = sock_net(sk);
+	__be16 orig_sport, orig_dport;
+	__be32 daddr, nexthop;
+	struct flowi4 *fl4;
+	struct rtable *rt;
+	int err;
+ffffffff81f71e17:	c7 45 cc 00 00 00 00 	movl   $0x0,-0x34(%rbp)
+ffffffff81f71e1e:	48 89 45 c0          	mov    %rax,-0x40(%rbp)
+
+	if (addr_len < sizeof(struct sockaddr_in))
+ffffffff81f71e22:	83 fa 0f             	cmp    $0xf,%edx
+ffffffff81f71e25:	0f 86 b5 04 00 00    	jbe    ffffffff81f722e0 <tcp_v4_connect+0x4f0>
+		return -EINVAL;
+
+	if (usin->sin_family != AF_INET)
+ffffffff81f71e2b:	66 83 3e 02          	cmpw   $0x2,(%rsi)
+ffffffff81f71e2f:	48 89 f3             	mov    %rsi,%rbx
+ffffffff81f71e32:	0f 85 9e 04 00 00    	jne    ffffffff81f722d6 <tcp_v4_connect+0x4e6>
+		return -EAFNOSUPPORT;
+
+	nexthop = daddr = usin->sin_addr.s_addr;
+	inet_opt = rcu_dereference_protected(inet->inet_opt,
+ffffffff81f71e38:	4c 8b a7 20 03 00 00 	mov    0x320(%rdi),%r12
+	nexthop = daddr = usin->sin_addr.s_addr;
+ffffffff81f71e3f:	44 8b 6e 04          	mov    0x4(%rsi),%r13d
+ffffffff81f71e43:	49 89 ff             	mov    %rdi,%r15
+					     lockdep_sock_is_held(sk));
+	if (inet_opt && inet_opt->opt.srr) {
+ffffffff81f71e46:	4d 85 e4             	test   %r12,%r12
+ffffffff81f71e49:	74 0c                	je     ffffffff81f71e57 <tcp_v4_connect+0x67>
+ffffffff81f71e4b:	41 80 7c 24 19 00    	cmpb   $0x0,0x19(%r12)
+ffffffff81f71e51:	0f 85 9a 02 00 00    	jne    ffffffff81f720f1 <tcp_v4_connect+0x301>
+	nexthop = daddr = usin->sin_addr.s_addr;
+ffffffff81f71e57:	44 89 ee             	mov    %r13d,%esi
+		if (!daddr)
+			return -EINVAL;
+		nexthop = inet_opt->opt.faddr;
+	}
+
+	orig_sport = inet->inet_sport;
+ffffffff81f71e5a:	41 0f b7 87 1e 03 00 	movzwl 0x31e(%r15),%eax
+ffffffff81f71e61:	00 
+	orig_dport = usin->sin_port;
+ffffffff81f71e62:	0f b7 53 02          	movzwl 0x2(%rbx),%edx
+	fl4->flowi4_iif = LOOPBACK_IFINDEX;
+	fl4->flowi4_l3mdev = 0;
+	fl4->flowi4_mark = mark;
+	fl4->flowi4_tos = tos;
+	fl4->flowi4_scope = scope;
+	fl4->flowi4_proto = proto;
+ffffffff81f71e66:	41 c6 87 9a 03 00 00 	movb   $0x6,0x39a(%r15)
+ffffffff81f71e6d:	06 
+	fl4->flowi4_iif = LOOPBACK_IFINDEX;
+ffffffff81f71e6e:	49 c7 87 8c 03 00 00 	movq   $0x1,0x38c(%r15)
+ffffffff81f71e75:	01 00 00 00 
+	fl4 = &inet->cork.fl.u.ip4;
+	rt = ip_route_connect(fl4, nexthop, inet->inet_saddr,
+ffffffff81f71e79:	41 8b 4f 14          	mov    0x14(%r15),%ecx
+	orig_sport = inet->inet_sport;
+ffffffff81f71e7d:	66 89 45 ae          	mov    %ax,-0x52(%rbp)
+	orig_dport = usin->sin_port;
+ffffffff81f71e81:	c1 e0 10             	shl    $0x10,%eax
+ffffffff81f71e84:	66 89 55 ac          	mov    %dx,-0x54(%rbp)
+ffffffff81f71e88:	09 c2                	or     %eax,%edx
+	fl4 = &inet->cork.fl.u.ip4;
+ffffffff81f71e8a:	49 8d 87 88 03 00 00 	lea    0x388(%r15),%rax
+ffffffff81f71e91:	41 89 d0             	mov    %edx,%r8d
+ffffffff81f71e94:	48 89 45 b8          	mov    %rax,-0x48(%rbp)
+	rt = ip_route_connect(fl4, nexthop, inet->inet_saddr,
+ffffffff81f71e98:	41 8b 97 18 03 00 00 	mov    0x318(%r15),%edx
+ffffffff81f71e9f:	48 89 f0             	mov    %rsi,%rax
+ffffffff81f71ea2:	48 c1 e0 20          	shl    $0x20,%rax
+	fl4->flowi4_oif = oif;
+ffffffff81f71ea6:	41 89 8f 88 03 00 00 	mov    %ecx,0x388(%r15)
+ffffffff81f71ead:	48 89 d7             	mov    %rdx,%rdi
+ffffffff81f71eb0:	48 09 c2             	or     %rax,%rdx
+}
+
+static __always_inline bool constant_test_bit(long nr, const volatile unsigned long *addr)
+{
+	return ((1UL << (nr & (BITS_PER_LONG-1))) &
+		(addr[nr >> _BITOPS_LONG_SHIFT])) != 0;
+ffffffff81f71eb3:	49 8b 87 10 03 00 00 	mov    0x310(%r15),%rax
+	fl4->flowi4_flags = flags;
+	fl4->flowi4_secid = 0;
+ffffffff81f71eba:	41 c7 87 9c 03 00 00 	movl   $0x0,0x39c(%r15)
+ffffffff81f71ec1:	00 00 00 00 
+ffffffff81f71ec5:	49 89 d1             	mov    %rdx,%r9
+	return RT_SCOPE_UNIVERSE;
+}
+
+static inline __u8 ip_sock_rt_tos(const struct sock *sk)
+{
+	return RT_TOS(inet_sk(sk)->tos);
+ffffffff81f71ec8:	41 0f b6 97 2c 03 00 	movzbl 0x32c(%r15),%edx
+ffffffff81f71ecf:	00 
+	fl4->flowi4_tun_key.tun_id = 0;
+ffffffff81f71ed0:	49 c7 87 a8 03 00 00 	movq   $0x0,0x3a8(%r15)
+ffffffff81f71ed7:	00 00 00 00 
+ffffffff81f71edb:	48 c1 e8 0f          	shr    $0xf,%rax
+	fl4->flowi4_uid = uid;
+	fl4->daddr = daddr;
+	fl4->saddr = saddr;
+ffffffff81f71edf:	4d 89 8f b0 03 00 00 	mov    %r9,0x3b0(%r15)
+ffffffff81f71ee6:	41 89 c3             	mov    %eax,%r11d
+ffffffff81f71ee9:	49 8b 47 60          	mov    0x60(%r15),%rax
+	__u8 flow_flags = 0;
+
+	if (inet_test_bit(TRANSPARENT, sk))
+		flow_flags |= FLOWI_FLAG_ANYSRC;
+
+	flowi4_init_output(fl4, oif, READ_ONCE(sk->sk_mark), ip_sock_rt_tos(sk),
+ffffffff81f71eed:	45 8b 97 c4 01 00 00 	mov    0x1c4(%r15),%r10d
+	return RT_TOS(inet_sk(sk)->tos);
+ffffffff81f71ef4:	83 e2 1e             	and    $0x1e,%edx
+ffffffff81f71ef7:	41 83 e3 01          	and    $0x1,%r11d
+	fl4->flowi4_tos = tos;
+ffffffff81f71efb:	41 88 97 98 03 00 00 	mov    %dl,0x398(%r15)
+ffffffff81f71f02:	48 c1 e8 0d          	shr    $0xd,%rax
+	fl4->flowi4_mark = mark;
+ffffffff81f71f06:	45 89 97 94 03 00 00 	mov    %r10d,0x394(%r15)
+ffffffff81f71f0d:	83 e0 01             	and    $0x1,%eax
+	fl4->flowi4_flags = flags;
+ffffffff81f71f10:	45 88 9f 9b 03 00 00 	mov    %r11b,0x39b(%r15)
+	return RT_SCOPE_UNIVERSE;
+ffffffff81f71f17:	f7 d8                	neg    %eax
+	fl4->fl4_dport = dport;
+ffffffff81f71f19:	45 89 87 b8 03 00 00 	mov    %r8d,0x3b8(%r15)
+	fl4->fl4_sport = sport;
+	fl4->flowi4_multipath_hash = 0;
+ffffffff81f71f20:	41 c7 87 a4 03 00 00 	movl   $0x0,0x3a4(%r15)
+ffffffff81f71f27:	00 00 00 00 
+ffffffff81f71f2b:	83 e0 fd             	and    $0xfffffffd,%eax
+	fl4->flowi4_scope = scope;
+ffffffff81f71f2e:	41 88 87 99 03 00 00 	mov    %al,0x399(%r15)
+	fl4->flowi4_uid = uid;
+ffffffff81f71f35:	41 8b 87 30 02 00 00 	mov    0x230(%r15),%eax
+ffffffff81f71f3c:	41 89 87 a0 03 00 00 	mov    %eax,0x3a0(%r15)
+	struct net *net = sock_net(sk);
+	struct rtable *rt;
+
+	ip_route_connect_init(fl4, dst, src, oif, protocol, sport, dport, sk);
+
+	if (!dst || !src) {
+ffffffff81f71f43:	85 f6                	test   %esi,%esi
+ffffffff81f71f45:	0f 84 6b 02 00 00    	je     ffffffff81f721b6 <tcp_v4_connect+0x3c6>
+ffffffff81f71f4b:	85 ff                	test   %edi,%edi
+ffffffff81f71f4d:	0f 84 63 02 00 00    	je     ffffffff81f721b6 <tcp_v4_connect+0x3c6>
+		if (IS_ERR(rt))
+			return rt;
+		ip_rt_put(rt);
+		flowi4_update_output(fl4, oif, fl4->daddr, fl4->saddr);
+	}
+	security_sk_classify_flow(sk, flowi4_to_flowi_common(fl4));
+ffffffff81f71f53:	4c 8b 75 b8          	mov    -0x48(%rbp),%r14
+ffffffff81f71f57:	4c 89 ff             	mov    %r15,%rdi
+ffffffff81f71f5a:	4c 89 f6             	mov    %r14,%rsi
+ffffffff81f71f5d:	e8 ce ad 74 ff       	call   ffffffff816bcd30 <security_sk_classify_flow>
+	return ip_route_output_flow(net, fl4, sk);
+ffffffff81f71f62:	48 8b 7d c0          	mov    -0x40(%rbp),%rdi
+ffffffff81f71f66:	4c 89 f6             	mov    %r14,%rsi
+ffffffff81f71f69:	4c 89 fa             	mov    %r15,%rdx
+ffffffff81f71f6c:	e8 cf 58 fc ff       	call   ffffffff81f37840 <ip_route_output_flow>
+ffffffff81f71f71:	49 89 c6             	mov    %rax,%r14
+			      sk->sk_bound_dev_if, IPPROTO_TCP, orig_sport,
+			      orig_dport, sk);
+	if (IS_ERR(rt)) {
+ffffffff81f71f74:	48 3d 00 f0 ff ff    	cmp    $0xfffffffffffff000,%rax
+ffffffff81f71f7a:	0f 87 dc 02 00 00    	ja     ffffffff81f7225c <tcp_v4_connect+0x46c>
+		if (err == -ENETUNREACH)
+			IP_INC_STATS(net, IPSTATS_MIB_OUTNOROUTES);
+		return err;
+	}
+
+	if (rt->rt_flags & (RTCF_MULTICAST | RTCF_BROADCAST)) {
+ffffffff81f71f80:	f7 80 8c 00 00 00 00 	testl  $0x30000000,0x8c(%rax)
+ffffffff81f71f87:	00 00 30 
+ffffffff81f71f8a:	0f 85 5a 03 00 00    	jne    ffffffff81f722ea <tcp_v4_connect+0x4fa>
+		ip_rt_put(rt);
+		return -ENETUNREACH;
+	}
+
+	if (!inet_opt || !inet_opt->opt.srr)
+ffffffff81f71f90:	4d 85 e4             	test   %r12,%r12
+ffffffff81f71f93:	0f 84 4c 01 00 00    	je     ffffffff81f720e5 <tcp_v4_connect+0x2f5>
+ffffffff81f71f99:	41 80 7c 24 19 00    	cmpb   $0x0,0x19(%r12)
+ffffffff81f71f9f:	0f 84 40 01 00 00    	je     ffffffff81f720e5 <tcp_v4_connect+0x2f5>
+		daddr = fl4->daddr;
+
+	tcp_death_row = &sock_net(sk)->ipv4.tcp_death_row;
+ffffffff81f71fa5:	49 8b 47 30          	mov    0x30(%r15),%rax
+ffffffff81f71fa9:	48 05 c0 02 00 00    	add    $0x2c0,%rax
+ffffffff81f71faf:	48 89 45 b0          	mov    %rax,-0x50(%rbp)
+
+	if (!inet->inet_saddr) {
+ffffffff81f71fb3:	41 8b 87 18 03 00 00 	mov    0x318(%r15),%eax
+ffffffff81f71fba:	85 c0                	test   %eax,%eax
+ffffffff81f71fbc:	0f 84 2c 02 00 00    	je     ffffffff81f721ee <tcp_v4_connect+0x3fe>
+#endif
+}
+
+static inline void sk_rcv_saddr_set(struct sock *sk, __be32 addr)
+{
+	sk->sk_rcv_saddr = addr; /* alias of inet_rcv_saddr */
+ffffffff81f71fc2:	41 89 47 04          	mov    %eax,0x4(%r15)
+		*(__force u64 *)addr = ((__force u64)(wh) << 32 | (__force u64)(wl));
+		return;
+	}
+#elif defined(__LITTLE_ENDIAN)
+	if (__builtin_constant_p(wl) && __builtin_constant_p(wh)) {
+		*(__force u64 *)addr = ((__force u64)(wl) << 32 | (__force u64)(wh));
+ffffffff81f71fc6:	49 c7 47 48 00 00 00 	movq   $0x0,0x48(%r15)
+ffffffff81f71fcd:	00 
+		return;
+	}
+#endif
+#endif
+	addr[0] = wh;
+ffffffff81f71fce:	41 c7 47 50 00 00 ff 	movl   $0xffff0000,0x50(%r15)
+ffffffff81f71fd5:	ff 
+	addr[1] = wl;
+ffffffff81f71fd6:	41 89 47 54          	mov    %eax,0x54(%r15)
+		}
+	} else {
+		sk_rcv_saddr_set(sk, inet->inet_saddr);
+	}
+
+	if (tp->rx_opt.ts_recent_stamp && inet->inet_daddr != daddr) {
+ffffffff81f71fda:	45 8b 87 b4 06 00 00 	mov    0x6b4(%r15),%r8d
+ffffffff81f71fe1:	45 85 c0             	test   %r8d,%r8d
+ffffffff81f71fe4:	74 25                	je     ffffffff81f7200b <tcp_v4_connect+0x21b>
+ffffffff81f71fe6:	45 3b 2f             	cmp    (%r15),%r13d
+ffffffff81f71fe9:	74 20                	je     ffffffff81f7200b <tcp_v4_connect+0x21b>
+		/* Reset inherited state */
+		tp->rx_opt.ts_recent	   = 0;
+		tp->rx_opt.ts_recent_stamp = 0;
+ffffffff81f71feb:	49 c7 87 b4 06 00 00 	movq   $0x0,0x6b4(%r15)
+ffffffff81f71ff2:	00 00 00 00 
+		if (likely(!tp->repair))
+ffffffff81f71ff6:	41 f6 87 45 06 00 00 	testb  $0x40,0x645(%r15)
+ffffffff81f71ffd:	40 
+ffffffff81f71ffe:	75 0b                	jne    ffffffff81f7200b <tcp_v4_connect+0x21b>
+			WRITE_ONCE(tp->write_seq, 0);
+ffffffff81f72000:	41 c7 87 1c 07 00 00 	movl   $0x0,0x71c(%r15)
+ffffffff81f72007:	00 00 00 00 
+	}
+
+	inet->inet_dport = usin->sin_port;
+ffffffff81f7200b:	0f b7 43 02          	movzwl 0x2(%rbx),%eax
+	sk_daddr_set(sk, daddr);
+
+	inet_csk(sk)->icsk_ext_hdr_len = 0;
+ffffffff81f7200f:	31 ff                	xor    %edi,%edi
+	sk->sk_daddr = addr; /* alias of inet_daddr */
+ffffffff81f72011:	45 89 2f             	mov    %r13d,(%r15)
+		*(__force u64 *)addr = ((__force u64)(wl) << 32 | (__force u64)(wh));
+ffffffff81f72014:	49 c7 47 38 00 00 00 	movq   $0x0,0x38(%r15)
+ffffffff81f7201b:	00 
+	inet->inet_dport = usin->sin_port;
+ffffffff81f7201c:	66 41 89 47 0c       	mov    %ax,0xc(%r15)
+	addr[0] = wh;
+ffffffff81f72021:	41 c7 47 40 00 00 ff 	movl   $0xffff0000,0x40(%r15)
+ffffffff81f72028:	ff 
+	addr[1] = wl;
+ffffffff81f72029:	45 89 6f 44          	mov    %r13d,0x44(%r15)
+	inet_csk(sk)->icsk_ext_hdr_len = 0;
+ffffffff81f7202d:	66 41 89 bf de 04 00 	mov    %di,0x4de(%r15)
+ffffffff81f72034:	00 
+	if (inet_opt)
+ffffffff81f72035:	4d 85 e4             	test   %r12,%r12
+ffffffff81f72038:	74 0e                	je     ffffffff81f72048 <tcp_v4_connect+0x258>
+		inet_csk(sk)->icsk_ext_hdr_len = inet_opt->opt.optlen;
+ffffffff81f7203a:	41 0f b6 44 24 18    	movzbl 0x18(%r12),%eax
+ffffffff81f72040:	66 41 89 87 de 04 00 	mov    %ax,0x4de(%r15)
+ffffffff81f72047:	00 
+
+	tp->rx_opt.mss_clamp = TCP_MSS_DEFAULT;
+ffffffff81f72048:	be 18 02 00 00       	mov    $0x218,%esi
+	/* Socket identity is still unknown (sport may be zero).
+	 * However we set state to SYN-SENT and not releasing socket
+	 * lock select source port, enter ourselves into the hash tables and
+	 * complete initialization after this.
+	 */
+	tcp_set_state(sk, TCP_SYN_SENT);
+ffffffff81f7204d:	4c 89 ff             	mov    %r15,%rdi
+	tp->rx_opt.mss_clamp = TCP_MSS_DEFAULT;
+ffffffff81f72050:	66 41 89 b7 ca 06 00 	mov    %si,0x6ca(%r15)
+ffffffff81f72057:	00 
+	tcp_set_state(sk, TCP_SYN_SENT);
+ffffffff81f72058:	be 02 00 00 00       	mov    $0x2,%esi
+ffffffff81f7205d:	e8 6e df fd ff       	call   ffffffff81f4ffd0 <tcp_set_state>
+	err = inet_hash_connect(tcp_death_row, sk);
+ffffffff81f72062:	48 8b 7d b0          	mov    -0x50(%rbp),%rdi
+ffffffff81f72066:	4c 89 fe             	mov    %r15,%rsi
+ffffffff81f72069:	e8 02 77 fd ff       	call   ffffffff81f49770 <inet_hash_connect>
+ffffffff81f7206e:	89 45 cc             	mov    %eax,-0x34(%rbp)
+	if (err)
+ffffffff81f72071:	85 c0                	test   %eax,%eax
+ffffffff81f72073:	0f 84 8b 00 00 00    	je     ffffffff81f72104 <tcp_v4_connect+0x314>
+failure:
+	/*
+	 * This unhashes the socket and releases the local port,
+	 * if necessary.
+	 */
+	tcp_set_state(sk, TCP_CLOSE);
+ffffffff81f72079:	be 07 00 00 00       	mov    $0x7,%esi
+ffffffff81f7207e:	4c 89 ff             	mov    %r15,%rdi
+ffffffff81f72081:	e8 4a df fd ff       	call   ffffffff81f4ffd0 <tcp_set_state>
+	inet_bhash2_reset_saddr(sk);
+ffffffff81f72086:	4c 89 ff             	mov    %r15,%rdi
+ffffffff81f72089:	e8 42 6d fd ff       	call   ffffffff81f48dd0 <inet_bhash2_reset_saddr>
+	dst_release(&rt->dst);
+ffffffff81f7208e:	4c 89 f7             	mov    %r14,%rdi
+ffffffff81f72091:	e8 2a 7d f1 ff       	call   ffffffff81e89dc0 <dst_release>
+	ip_rt_put(rt);
+	sk->sk_route_caps = 0;
+	inet->inet_dport = 0;
+ffffffff81f72096:	31 c0                	xor    %eax,%eax
+	sk->sk_route_caps = 0;
+ffffffff81f72098:	49 c7 87 e8 01 00 00 	movq   $0x0,0x1e8(%r15)
+ffffffff81f7209f:	00 00 00 00 
+	inet->inet_dport = 0;
+ffffffff81f720a3:	66 41 89 47 0c       	mov    %ax,0xc(%r15)
+	return err;
+ffffffff81f720a8:	8b 45 cc             	mov    -0x34(%rbp),%eax
+}
+ffffffff81f720ab:	48 8b 55 d0          	mov    -0x30(%rbp),%rdx
+ffffffff81f720af:	65 48 2b 14 25 28 00 	sub    %gs:0x28,%rdx
+ffffffff81f720b6:	00 00 
+ffffffff81f720b8:	0f 85 3e 02 00 00    	jne    ffffffff81f722fc <tcp_v4_connect+0x50c>
+ffffffff81f720be:	48 83 c4 30          	add    $0x30,%rsp
+ffffffff81f720c2:	5b                   	pop    %rbx
+ffffffff81f720c3:	41 5c                	pop    %r12
+ffffffff81f720c5:	41 5d                	pop    %r13
+ffffffff81f720c7:	41 5e                	pop    %r14
+ffffffff81f720c9:	41 5f                	pop    %r15
+ffffffff81f720cb:	5d                   	pop    %rbp
+ffffffff81f720cc:	31 d2                	xor    %edx,%edx
+ffffffff81f720ce:	31 c9                	xor    %ecx,%ecx
+ffffffff81f720d0:	31 f6                	xor    %esi,%esi
+ffffffff81f720d2:	31 ff                	xor    %edi,%edi
+ffffffff81f720d4:	45 31 c0             	xor    %r8d,%r8d
+ffffffff81f720d7:	45 31 c9             	xor    %r9d,%r9d
+ffffffff81f720da:	45 31 d2             	xor    %r10d,%r10d
+ffffffff81f720dd:	45 31 db             	xor    %r11d,%r11d
+ffffffff81f720e0:	e9 bb c3 23 00       	jmp    ffffffff821ae4a0 <__x86_return_thunk>
+		daddr = fl4->daddr;
+ffffffff81f720e5:	45 8b af b4 03 00 00 	mov    0x3b4(%r15),%r13d
+ffffffff81f720ec:	e9 b4 fe ff ff       	jmp    ffffffff81f71fa5 <tcp_v4_connect+0x1b5>
+		if (!daddr)
+ffffffff81f720f1:	45 85 ed             	test   %r13d,%r13d
+ffffffff81f720f4:	0f 84 e6 01 00 00    	je     ffffffff81f722e0 <tcp_v4_connect+0x4f0>
+		nexthop = inet_opt->opt.faddr;
+ffffffff81f720fa:	41 8b 74 24 10       	mov    0x10(%r12),%esi
+ffffffff81f720ff:	e9 56 fd ff ff       	jmp    ffffffff81f71e5a <tcp_v4_connect+0x6a>
+	return sk ? sk->sk_uid : make_kuid(net->user_ns, 0);
+}
+
+static inline u32 net_tx_rndhash(void)
+{
+	u32 v = get_random_u32();
+ffffffff81f72104:	e8 d7 f8 b5 ff       	call   ffffffff81ad19e0 <get_random_u32>
+
+	return v ?: 1;
+ffffffff81f72109:	ba 01 00 00 00       	mov    $0x1,%edx
+ffffffff81f7210e:	85 c0                	test   %eax,%eax
+ffffffff81f72110:	0f 44 c2             	cmove  %edx,%eax
+			       inet->inet_sport, inet->inet_dport, sk);
+ffffffff81f72113:	41 0f b7 97 1e 03 00 	movzwl 0x31e(%r15),%edx
+ffffffff81f7211a:	00 
+}
+
+static inline void sk_set_txhash(struct sock *sk)
+{
+	/* This pairs with READ_ONCE() in skb_set_hash_from_sk() */
+	WRITE_ONCE(sk->sk_txhash, net_tx_rndhash());
+ffffffff81f7211b:	41 89 87 fc 01 00 00 	mov    %eax,0x1fc(%r15)
+ffffffff81f72122:	41 0f b7 47 0c       	movzwl 0xc(%r15),%eax
+static inline struct rtable *ip_route_newports(struct flowi4 *fl4, struct rtable *rt,
+					       __be16 orig_sport, __be16 orig_dport,
+					       __be16 sport, __be16 dport,
+					       const struct sock *sk)
+{
+	if (sport != orig_sport || dport != orig_dport) {
+ffffffff81f72127:	66 3b 55 ae          	cmp    -0x52(%rbp),%dx
+ffffffff81f7212b:	0f 85 51 01 00 00    	jne    ffffffff81f72282 <tcp_v4_connect+0x492>
+ffffffff81f72131:	66 3b 45 ac          	cmp    -0x54(%rbp),%ax
+ffffffff81f72135:	0f 85 47 01 00 00    	jne    ffffffff81f72282 <tcp_v4_connect+0x492>
+	sk->sk_gso_type = SKB_GSO_TCPV4;
+ffffffff81f7213b:	41 c7 87 f0 01 00 00 	movl   $0x1,0x1f0(%r15)
+ffffffff81f72142:	01 00 00 00 
+	sk_setup_caps(sk, &rt->dst);
+ffffffff81f72146:	4c 89 f6             	mov    %r14,%rsi
+ffffffff81f72149:	4c 89 ff             	mov    %r15,%rdi
+ffffffff81f7214c:	e8 ef a9 ed ff       	call   ffffffff81e4cb40 <sk_setup_caps>
+	if (likely(!tp->repair)) {
+ffffffff81f72151:	41 f6 87 45 06 00 00 	testb  $0x40,0x645(%r15)
+ffffffff81f72158:	40 
+ffffffff81f72159:	75 29                	jne    ffffffff81f72184 <tcp_v4_connect+0x394>
+		if (!tp->write_seq)
+ffffffff81f7215b:	41 8b 8f 1c 07 00 00 	mov    0x71c(%r15),%ecx
+ffffffff81f72162:	85 c9                	test   %ecx,%ecx
+ffffffff81f72164:	0f 84 cb 00 00 00    	je     ffffffff81f72235 <tcp_v4_connect+0x445>
+		WRITE_ONCE(tp->tsoffset,
+ffffffff81f7216a:	41 8b 17             	mov    (%r15),%edx
+ffffffff81f7216d:	41 8b b7 18 03 00 00 	mov    0x318(%r15),%esi
+ffffffff81f72174:	48 8b 7d c0          	mov    -0x40(%rbp),%rdi
+ffffffff81f72178:	e8 23 91 ef ff       	call   ffffffff81e6b2a0 <secure_tcp_ts_off>
+ffffffff81f7217d:	41 89 87 d4 05 00 00 	mov    %eax,0x5d4(%r15)
+	atomic_set(&inet->inet_id, get_random_u16());
+ffffffff81f72184:	e8 07 f7 b5 ff       	call   ffffffff81ad1890 <get_random_u16>
+	if (tcp_fastopen_defer_connect(sk, &err))
+ffffffff81f72189:	48 8d 75 cc          	lea    -0x34(%rbp),%rsi
+ffffffff81f7218d:	4c 89 ff             	mov    %r15,%rdi
+	atomic_set(&inet->inet_id, get_random_u16());
+ffffffff81f72190:	0f b7 c0             	movzwl %ax,%eax
+	return __READ_ONCE((v)->counter);
+}
+
+static __always_inline void arch_atomic_set(atomic_t *v, int i)
+{
+	__WRITE_ONCE(v->counter, i);
+ffffffff81f72193:	41 89 87 28 03 00 00 	mov    %eax,0x328(%r15)
+	if (tcp_fastopen_defer_connect(sk, &err))
+ffffffff81f7219a:	e8 d1 b6 00 00       	call   ffffffff81f7d870 <tcp_fastopen_defer_connect>
+ffffffff81f7219f:	84 c0                	test   %al,%al
+ffffffff81f721a1:	0f 85 01 ff ff ff    	jne    ffffffff81f720a8 <tcp_v4_connect+0x2b8>
+	if (err)
+ffffffff81f721a7:	8b 55 cc             	mov    -0x34(%rbp),%edx
+ffffffff81f721aa:	85 d2                	test   %edx,%edx
+ffffffff81f721ac:	74 6f                	je     ffffffff81f7221d <tcp_v4_connect+0x42d>
+		rt = NULL;
+ffffffff81f721ae:	45 31 f6             	xor    %r14d,%r14d
+ffffffff81f721b1:	e9 c3 fe ff ff       	jmp    ffffffff81f72079 <tcp_v4_connect+0x289>
+	return ip_route_output_key_hash(net, flp, NULL);
+ffffffff81f721b6:	48 8b 75 b8          	mov    -0x48(%rbp),%rsi
+ffffffff81f721ba:	48 8b 7d c0          	mov    -0x40(%rbp),%rdi
+ffffffff81f721be:	31 d2                	xor    %edx,%edx
+ffffffff81f721c0:	89 4d b0             	mov    %ecx,-0x50(%rbp)
+ffffffff81f721c3:	e8 d8 47 fc ff       	call   ffffffff81f369a0 <ip_route_output_key_hash>
+ffffffff81f721c8:	49 89 c6             	mov    %rax,%r14
+		if (IS_ERR(rt))
+ffffffff81f721cb:	48 3d 00 f0 ff ff    	cmp    $0xfffffffffffff000,%rax
+ffffffff81f721d1:	0f 87 85 00 00 00    	ja     ffffffff81f7225c <tcp_v4_connect+0x46c>
+	dst_release(&rt->dst);
+ffffffff81f721d7:	48 89 c7             	mov    %rax,%rdi
+ffffffff81f721da:	e8 e1 7b f1 ff       	call   ffffffff81e89dc0 <dst_release>
+
+/* Reset some input parameters after previous lookup */
+static inline void flowi4_update_output(struct flowi4 *fl4, int oif,
+					__be32 daddr, __be32 saddr)
+{
+	fl4->flowi4_oif = oif;
+ffffffff81f721df:	8b 4d b0             	mov    -0x50(%rbp),%ecx
+ffffffff81f721e2:	41 89 8f 88 03 00 00 	mov    %ecx,0x388(%r15)
+	fl4->daddr = daddr;
+	fl4->saddr = saddr;
+}
+ffffffff81f721e9:	e9 65 fd ff ff       	jmp    ffffffff81f71f53 <tcp_v4_connect+0x163>
+		err = inet_bhash2_update_saddr(sk,  &fl4->saddr, AF_INET);
+ffffffff81f721ee:	49 8d b7 b0 03 00 00 	lea    0x3b0(%r15),%rsi
+ffffffff81f721f5:	ba 02 00 00 00       	mov    $0x2,%edx
+ffffffff81f721fa:	4c 89 ff             	mov    %r15,%rdi
+ffffffff81f721fd:	e8 9e 6b fd ff       	call   ffffffff81f48da0 <inet_bhash2_update_saddr>
+ffffffff81f72202:	89 45 cc             	mov    %eax,-0x34(%rbp)
+		if (err) {
+ffffffff81f72205:	85 c0                	test   %eax,%eax
+ffffffff81f72207:	0f 84 cd fd ff ff    	je     ffffffff81f71fda <tcp_v4_connect+0x1ea>
+ffffffff81f7220d:	4c 89 f7             	mov    %r14,%rdi
+ffffffff81f72210:	e8 ab 7b f1 ff       	call   ffffffff81e89dc0 <dst_release>
+			return err;
+ffffffff81f72215:	8b 45 cc             	mov    -0x34(%rbp),%eax
+ffffffff81f72218:	e9 8e fe ff ff       	jmp    ffffffff81f720ab <tcp_v4_connect+0x2bb>
+	err = tcp_connect(sk);
+ffffffff81f7221d:	4c 89 ff             	mov    %r15,%rdi
+ffffffff81f72220:	e8 0b 75 ff ff       	call   ffffffff81f69730 <tcp_connect>
+ffffffff81f72225:	89 45 cc             	mov    %eax,-0x34(%rbp)
+	if (err)
+ffffffff81f72228:	85 c0                	test   %eax,%eax
+ffffffff81f7222a:	0f 84 7b fe ff ff    	je     ffffffff81f720ab <tcp_v4_connect+0x2bb>
+ffffffff81f72230:	e9 79 ff ff ff       	jmp    ffffffff81f721ae <tcp_v4_connect+0x3be>
+			WRITE_ONCE(tp->write_seq,
+ffffffff81f72235:	0f b7 4b 02          	movzwl 0x2(%rbx),%ecx
+ffffffff81f72239:	41 0f b7 97 1e 03 00 	movzwl 0x31e(%r15),%edx
+ffffffff81f72240:	00 
+ffffffff81f72241:	41 8b 37             	mov    (%r15),%esi
+ffffffff81f72244:	41 8b bf 18 03 00 00 	mov    0x318(%r15),%edi
+ffffffff81f7224b:	e8 80 8d ef ff       	call   ffffffff81e6afd0 <secure_tcp_seq>
+ffffffff81f72250:	41 89 87 1c 07 00 00 	mov    %eax,0x71c(%r15)
+ffffffff81f72257:	e9 0e ff ff ff       	jmp    ffffffff81f7216a <tcp_v4_connect+0x37a>
+		err = PTR_ERR(rt);
+ffffffff81f7225c:	44 89 75 cc          	mov    %r14d,-0x34(%rbp)
+ffffffff81f72260:	44 89 f0             	mov    %r14d,%eax
+		if (err == -ENETUNREACH)
+ffffffff81f72263:	41 83 fe 9b          	cmp    $0xffffff9b,%r14d
+ffffffff81f72267:	0f 85 3e fe ff ff    	jne    ffffffff81f720ab <tcp_v4_connect+0x2bb>
+			IP_INC_STATS(net, IPSTATS_MIB_OUTNOROUTES);
+ffffffff81f7226d:	48 8b 5d c0          	mov    -0x40(%rbp),%rbx
+ffffffff81f72271:	48 8b 93 90 01 00 00 	mov    0x190(%rbx),%rdx
+ffffffff81f72278:	65 48 ff 42 78       	incq   %gs:0x78(%rdx)
+		return err;
+ffffffff81f7227d:	e9 29 fe ff ff       	jmp    ffffffff81f720ab <tcp_v4_connect+0x2bb>
+		fl4->fl4_dport = dport;
+ffffffff81f72282:	c1 e2 10             	shl    $0x10,%edx
+	dst_release(&rt->dst);
+ffffffff81f72285:	4c 89 f7             	mov    %r14,%rdi
+		fl4->fl4_dport = dport;
+ffffffff81f72288:	09 d0                	or     %edx,%eax
+ffffffff81f7228a:	41 89 87 b8 03 00 00 	mov    %eax,0x3b8(%r15)
+	dst_release(&rt->dst);
+ffffffff81f72291:	e8 2a 7b f1 ff       	call   ffffffff81e89dc0 <dst_release>
+	fl4->flowi4_oif = oif;
+ffffffff81f72296:	41 8b 47 14          	mov    0x14(%r15),%eax
+		fl4->fl4_sport = sport;
+		ip_rt_put(rt);
+		flowi4_update_output(fl4, sk->sk_bound_dev_if, fl4->daddr,
+				     fl4->saddr);
+		security_sk_classify_flow(sk, flowi4_to_flowi_common(fl4));
+ffffffff81f7229a:	4c 8b 75 b8          	mov    -0x48(%rbp),%r14
+ffffffff81f7229e:	4c 89 ff             	mov    %r15,%rdi
+ffffffff81f722a1:	41 89 87 88 03 00 00 	mov    %eax,0x388(%r15)
+ffffffff81f722a8:	4c 89 f6             	mov    %r14,%rsi
+ffffffff81f722ab:	e8 80 aa 74 ff       	call   ffffffff816bcd30 <security_sk_classify_flow>
+		return ip_route_output_flow(sock_net(sk), fl4, sk);
+ffffffff81f722b0:	49 8b 7f 30          	mov    0x30(%r15),%rdi
+ffffffff81f722b4:	4c 89 f6             	mov    %r14,%rsi
+ffffffff81f722b7:	4c 89 fa             	mov    %r15,%rdx
+ffffffff81f722ba:	e8 81 55 fc ff       	call   ffffffff81f37840 <ip_route_output_flow>
+ffffffff81f722bf:	49 89 c6             	mov    %rax,%r14
+	if (IS_ERR(rt)) {
+ffffffff81f722c2:	48 3d 00 f0 ff ff    	cmp    $0xfffffffffffff000,%rax
+ffffffff81f722c8:	0f 86 6d fe ff ff    	jbe    ffffffff81f7213b <tcp_v4_connect+0x34b>
+		err = PTR_ERR(rt);
+ffffffff81f722ce:	89 45 cc             	mov    %eax,-0x34(%rbp)
+		goto failure;
+ffffffff81f722d1:	e9 d8 fe ff ff       	jmp    ffffffff81f721ae <tcp_v4_connect+0x3be>
+		return -EAFNOSUPPORT;
+ffffffff81f722d6:	b8 9f ff ff ff       	mov    $0xffffff9f,%eax
+ffffffff81f722db:	e9 cb fd ff ff       	jmp    ffffffff81f720ab <tcp_v4_connect+0x2bb>
+		return -EINVAL;
+ffffffff81f722e0:	b8 ea ff ff ff       	mov    $0xffffffea,%eax
+ffffffff81f722e5:	e9 c1 fd ff ff       	jmp    ffffffff81f720ab <tcp_v4_connect+0x2bb>
+	dst_release(&rt->dst);
+ffffffff81f722ea:	48 89 c7             	mov    %rax,%rdi
+ffffffff81f722ed:	e8 ce 7a f1 ff       	call   ffffffff81e89dc0 <dst_release>
+		return -ENETUNREACH;
+ffffffff81f722f2:	b8 9b ff ff ff       	mov    $0xffffff9b,%eax
+ffffffff81f722f7:	e9 af fd ff ff       	jmp    ffffffff81f720ab <tcp_v4_connect+0x2bb>
+}
+ffffffff81f722fc:	e8 bf 08 22 00       	call   ffffffff82192bc0 <__stack_chk_fail>
+
+Disassembly of section .init.text:
+
+Disassembly of section .altinstr_aux:
+
+Disassembly of section .altinstr_replacement:
+
+Disassembly of section .exit.text:
